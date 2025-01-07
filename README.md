@@ -21,7 +21,7 @@ Bastion is a secure and efficient password management system built with Rust ðŸ¦
 ```
 git clone https://github.com/AyushBarik/Bastion.git
 cd Bastion
-./build.sh
+./installation.sh
 ```
 That's it! ðŸŽ‰ Now you can run bastion from anywhere:
 
