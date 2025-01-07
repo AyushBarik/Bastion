@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Result};
+use rusqlite::{Connection, Result};
 
 #[derive(Debug)]
 struct Service {
@@ -10,11 +10,12 @@ struct Service {
 }
 
 fn main() -> Result<()> {
-    let conn = Connection::open_in_memory()?;
-
+    let conn = Connection::open("/Users/ayush/Desktop/Rust-ML/Bastion/database.db")?;
+//maybe use .env 
+//create table once
     conn.execute(
-        "CREATE TABLE passwords (
-            id INTEGER
+        "CREATE TABLE IF NOT EXISTS passwords (
+            id INTEGER,
             service TEXT NOT NULL,
             nonce BLOB NOT NULL,
             encrypted_password BLOB NOT NULL,
@@ -23,18 +24,20 @@ fn main() -> Result<()> {
         )",
         (), // empty list of parameters.
     )?;
-    let me = Service {
-        id: Some(12),
-        service: "Netflix".to_string(),
-        nonce: vec![12,38,49],
-        encrypted_password: vec![12,34,76,10,20,34],
-        notes: None
-    };
-    conn.execute(
-        "INSERT INTO passwords (id, service, nonce, encrypted_password, notes) VALUES (?1, ?2, ?3, ?4, ?5)",
-        (&me.id, &me.service, &me.nonce, &me.encrypted_password, &me.notes),
-    )?;
+//insert data
+    // let me = Service {
+    //     id: None,
+    //     service: "Netflix".to_string(),
+    //     nonce: vec![32,38,49],
+    //     encrypted_password: vec![32,34,76,10,20,34],
+    //     notes: None
+    // };
+    // conn.execute(
+    //     "INSERT INTO passwords (id, service, nonce, encrypted_password, notes) VALUES (?1, ?2, ?3, ?4, ?5)",
+    //     (&me.id, &me.service, &me.nonce, &me.encrypted_password, &me.notes),
+    // )?;
 
+//display data
     let mut stmt = conn.prepare("SELECT id, service, nonce, encrypted_password, notes FROM passwords")?;
     let person_iter = stmt.query_map([], |row| {
         Ok(Service {
