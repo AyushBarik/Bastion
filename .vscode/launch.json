@@ -1,0 +1,156 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'common'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=common",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "common",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'common'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=common",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "common",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'delete'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=delete",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "delete",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'delete'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=delete",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "delete",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'insert'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=insert",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "insert",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'insert'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=insert",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "insert",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'view'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=view",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "view",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'view'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=view",
+                    "--package=Bastion"
+                ],
+                "filter": {
+                    "name": "view",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

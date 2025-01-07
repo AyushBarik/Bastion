@@ -1,6 +1,8 @@
 use rusqlite::{Connection, Result};
+use prettytable::{Table, row};
+use std::env;
 
-#[derive(Debug)]
+#[derive(Debug)] 
 struct Service {
     id: Option<i32>,
     service: String,
@@ -10,7 +12,9 @@ struct Service {
 }
 
 fn main() -> Result<()> {
-    let conn = Connection::open("/Users/ayush/Desktop/Rust-ML/Bastion/database.db")?;
+    let curr_dir: std::path::PathBuf = env::current_dir().expect("???DIRECTORY NOT FOUND???");
+    let path_database: std::path::PathBuf = curr_dir.join("database.db");
+    let conn: Connection = Connection::open(path_database)?;
 //maybe use .env 
 //create table once
     conn.execute(
@@ -24,21 +28,9 @@ fn main() -> Result<()> {
         )",
         (), // empty list of parameters.
     )?;
-//insert data
-    // let me = Service {
-    //     id: None,
-    //     service: "Netflix".to_string(),
-    //     nonce: vec![32,38,49],
-    //     encrypted_password: vec![32,34,76,10,20,34],
-    //     notes: None
-    // };
-    // conn.execute(
-    //     "INSERT INTO passwords (id, service, nonce, encrypted_password, notes) VALUES (?1, ?2, ?3, ?4, ?5)",
-    //     (&me.id, &me.service, &me.nonce, &me.encrypted_password, &me.notes),
-    // )?;
 
 //display data
-    let mut stmt = conn.prepare("SELECT id, service, nonce, encrypted_password, notes FROM passwords")?;
+    let mut stmt: rusqlite::Statement<'_> = conn.prepare("SELECT id, service, nonce, encrypted_password, notes FROM passwords")?;
     let person_iter = stmt.query_map([], |row| {
         Ok(Service {
             id: row.get(0)?,
@@ -49,9 +41,37 @@ fn main() -> Result<()> {
         })
     })?;
 
+    let mut table: Table = Table::new();
+    table.add_row(row!["id","service","nonce","encrypted_password","notes"]);
+
     for person in person_iter {
-        println!("Found person {:?}", person.unwrap());
+        let uwperson: Service = person.unwrap();
+
+        let pid: i32 = uwperson.id.unwrap_or(-1);
+        let pservice: String = uwperson.service;
+        let pnonce: String = hex_to_string(uwperson.nonce).unwrap_or("MISSING".to_string());
+        let pencrypted_password: String = hex_to_string(uwperson.encrypted_password).unwrap_or("MISSING".to_string());
+        let pnotes: String = uwperson.notes.unwrap_or("None".to_string());
+
+        table.add_row(row![pid,pservice,pnonce,pencrypted_password,pnotes]);
     }
 
+    table.printstd();
+    
     Ok(())
 }
+
+fn hex_to_string(binary: Vec<u8>) -> Option<String> {
+
+    let mut hex: String = "x".to_string();
+    for byte in binary{
+
+        let add_hex: String = format!("{:x}", byte);
+        hex = hex + &add_hex;
+    
+    }
+    hex += "\n";
+    
+    Some(hex)
+}
+
