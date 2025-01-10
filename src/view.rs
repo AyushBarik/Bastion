@@ -1,6 +1,8 @@
 use rusqlite::{Connection, Result};
 use prettytable::{Table, row};
-use std::env;
+use std::{env, io};
+
+mod common;
 
 #[derive(Debug)] 
 struct Service {
@@ -12,9 +14,8 @@ struct Service {
 }
 
 fn main() -> Result<()> {
-    let curr_dir: std::path::PathBuf = env::current_dir().expect("???DIRECTORY NOT FOUND???");
-    let path_database: std::path::PathBuf = curr_dir.join("database.db");
-    let conn: Connection = Connection::open(path_database)?;
+    let conn = Connection::open("/Users/ayush/Desktop/Rust-ML/Bastion/database.db").unwrap();
+    println!("path {:?}", conn);
 //maybe use .env 
 //create table once
     conn.execute(
@@ -27,7 +28,25 @@ fn main() -> Result<()> {
 
         )",
         (), // empty list of parameters.
+
+        //asks to set the master password 
+
     )?;
+
+    //Ask for and check password
+    println!("Enter Master Password:");
+    let mut mpassword = Default::default();
+    io::stdin().read_line(&mut mpassword).expect("WRONG PASSWORD");
+
+    //check aaginst database
+    let result = common::hashpass(mpassword).expect("FAILED TO HASH");
+    if !result.1 {
+        println!("WRONG PASSWORD");
+        return Ok(())
+    }
+    //if correct use mpassword to derive key
+
+    //wait for abort view insert delete.... async
 
 //display data
     let mut stmt: rusqlite::Statement<'_> = conn.prepare("SELECT id, service, nonce, encrypted_password, notes FROM passwords")?;
@@ -49,8 +68,8 @@ fn main() -> Result<()> {
 
         let pid: i32 = uwperson.id.unwrap_or(-1);
         let pservice: String = uwperson.service;
-        let pnonce: String = hex_to_string(uwperson.nonce).unwrap_or("MISSING".to_string());
-        let pencrypted_password: String = hex_to_string(uwperson.encrypted_password).unwrap_or("MISSING".to_string());
+        let pnonce: String = common::bin_to_hexstring(uwperson.nonce).unwrap_or("MISSING".to_string());
+        let pencrypted_password: String = common::bin_to_hexstring(uwperson.encrypted_password).unwrap_or("MISSING".to_string());
         let pnotes: String = uwperson.notes.unwrap_or("None".to_string());
 
         table.add_row(row![pid,pservice,pnonce,pencrypted_password,pnotes]);
@@ -61,17 +80,4 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn hex_to_string(binary: Vec<u8>) -> Option<String> {
-
-    let mut hex: String = "x".to_string();
-    for byte in binary{
-
-        let add_hex: String = format!("{:x}", byte);
-        hex = hex + &add_hex;
-    
-    }
-    hex += "\n";
-    
-    Some(hex)
-}
 

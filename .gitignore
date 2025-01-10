@@ -1,2 +1,5 @@
 /target
 database.db
+/.vscode
+/src
+.env

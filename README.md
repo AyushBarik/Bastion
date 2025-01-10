@@ -1,5 +1,7 @@
 # 🏰 Bastion
 
+CURRENTLY ONLY AVAILABLE FOR MAC & LINUX
+
 Bastion is a secure and efficient password management system built with Rust 🦀. It helps you keep your passwords safe and easily accessible, combining strong encryption and a user-friendly command-line interface.
 
 ### ⚔️ Features

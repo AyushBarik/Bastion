@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+aes-gcm = "0.10.3"
+argon2 = "0.5.3"
+dotenv = "0.15.0"
 prettytable = "0.10.0"
+rand = "0.8.5"
 rusqlite = "0.32.1"
 
 #instructions for "cargo build"
@@ -23,3 +27,7 @@ path = "src/insert.rs"
 [[bin]]
 name = "common"
 path = "src/common.rs"
+
+[[bin]]
+name = "Juniper"
+path = "src/Juniper.rs"
