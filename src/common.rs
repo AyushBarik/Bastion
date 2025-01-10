@@ -1,13 +1,12 @@
-//extern crate aes_gcm;
-
-// use aes_gcm::aead::{Aead, KeyInit, OsRng};
-// use aes_gcm::{Aes256Gcm, Key, Nonce}; // AES-GCM with 256-bit key
-// use rand::RngCore;
-
+extern crate aes_gcm;
 extern crate dotenv;
 extern crate argon2;
 extern crate rand;
 extern crate rusqlite;
+
+// use aes_gcm::aead::{Aead, KeyInit, OsRng};
+// use aes_gcm::{Aes256Gcm, Key, Nonce}; // AES-GCM with 256-bit key
+// use rand::RngCore;
 
 use dotenv::from_path;
 use std::env;
@@ -15,14 +14,19 @@ use std::env;
 use std::process::Command;
 
 use argon2::{
-    password_hash::{SaltString, PasswordHasher, PasswordVerifier, PasswordHash},
+    password_hash::{SaltString, PasswordHasher},
     Argon2,
 };
 
 use rusqlite::Result;
-//use std::convert::TryInto;
 
-//use std::error::Error;
+fn delicious_juniper() -> String {
+    let output = Command::new("/Users/ayush/Desktop/Rust-ML/Bastion/src/Juniper") 
+        .output()
+        .expect("Failed to execute Juniper");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
 
 pub fn hashpass(mut password: String) -> Result<(String, bool), argon2::password_hash::Error> {
     //dotenv().expect("Failed to load .env file");
@@ -140,11 +144,5 @@ pub fn hexstring_to_bin(mut hex_string: String) -> Option<Vec<u8>> {
 }
 
 
-fn delicious_juniper() -> String {
-    let output = Command::new("/Users/ayush/Desktop/Rust-ML/Bastion/src/Juniper") 
-        .output()
-        .expect("Failed to execute Juniper");
 
-    String::from_utf8_lossy(&output.stdout).to_string()
-}
 

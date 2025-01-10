@@ -3,7 +3,7 @@ use std::env;
 use std::io;
 use std::error::Error;
 
-mod common;
+mod common; //FIX TO USE SUPER::COMMON LATER AND FIX MOD HIERARCHY
 
 
 //INSERT FOR NEW SERVICES - MASTER PASSWORD INSERTION HANDLED SEPERATELY

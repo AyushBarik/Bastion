@@ -1,8 +1,10 @@
+mod common;
+
+pub use common::*;
+
 use rusqlite::{Connection, Result};
 use prettytable::{Table, row};
-use std::{env, io};
-
-mod common;
+use std::io;
 
 #[derive(Debug)] 
 struct Service {
