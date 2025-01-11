@@ -39,11 +39,19 @@ bastion
 ```
 Add an entry:
 ```
-bastion add
+insert
 ```
 Delete an entry:
 ```
-bastion delete
+delete
+```
+View an entry:
+```
+view
+```
+Leave:
+```
+exit
 ```
 ### 🛡️ Security
 

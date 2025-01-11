@@ -7,3 +7,5 @@
 - REDO Paths so it works universally (keep in mind bastion binary moved to usr/bin)
 - rename files, clean up readme
 - clean ujp directories
+- remove garbage print statements!!!
+- use pepper not just salts
