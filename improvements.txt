@@ -1,0 +1,9 @@
+- tab autocompletion
+- fix bad habit practices (changing error types)
+- fix id assignment. "1 2 3" if delete 2 shows "1 3" <- WRONG
+- general code optimization
+- more involvement of cinderella.txt
+- redisplay table after CRUD
+- REDO Paths so it works universally (keep in mind bastion binary moved to usr/bin)
+- rename files, clean up readme
+- clean ujp directories

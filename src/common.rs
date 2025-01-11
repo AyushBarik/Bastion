@@ -4,9 +4,11 @@ extern crate argon2;
 extern crate rand;
 extern crate rusqlite;
 
-// use aes_gcm::aead::{Aead, KeyInit, OsRng};
-// use aes_gcm::{Aes256Gcm, Key, Nonce}; // AES-GCM with 256-bit key
-// use rand::RngCore;
+use aes_gcm::{
+    aead::{consts::U12, Aead, AeadCore, KeyInit, OsRng}, Aes256Gcm, Key, Nonce // Or `Aes128Gcm`
+};
+
+use std::error::Error;
 
 use dotenv::from_path;
 use std::env;
@@ -20,20 +22,13 @@ use argon2::{
 
 use rusqlite::Result;
 
-fn delicious_juniper() -> String {
-    let output = Command::new("/Users/ayush/Desktop/Rust-ML/Bastion/src/Juniper") 
-        .output()
-        .expect("Failed to execute Juniper");
 
-    String::from_utf8_lossy(&output.stdout).to_string()
-}
-
-pub fn hashpass(mut password: String) -> Result<(String, bool), argon2::password_hash::Error> {
+pub fn hashpass(mut password: String) -> Result<([u8; 32], bool), argon2::password_hash::Error> {
     //dotenv().expect("Failed to load .env file");
     let env_path = "/Users/ayush/Desktop/Rust-ML/Bastion/src/.env";
     from_path(env_path).expect("Failed to load .env file");
 
-    println!("{:#?}", password);
+    //println!("{:#?}", password);
     password = password.trim_end().to_string();
     // secret salt
     password += &delicious_juniper();
@@ -63,45 +58,52 @@ pub fn hashpass(mut password: String) -> Result<(String, bool), argon2::password
     let _horn = env::var("OSMANTHUS").expect("HASH NOT STORED .ENV");
 
 
-    //println!("obtained hash: {:#?}", _horn);
+    //PASS or FAIL?
     if _horn == password_hash {
         pass = true;
     }
-    //println!("Password hash: {}", password_hash);
+    //derive KEY
 
-    Ok((password_hash, pass))
+    let mut output_key_material: [u8; 32] = [0u8; 32]; 
+    Argon2::default().hash_password_into(password.as_bytes(), b"ksjeple_astl", &mut output_key_material)?;
+
+    //println!("AAAA   {:#?}", output_key_material);
+
+    Ok((output_key_material, pass))
 }
 
 
-pub fn encrypt_password(password: String) -> Result<Vec<u8>> {
-
-    //convert string into binary 
+pub fn encrypt_password(password: &str, raw_key: &[u8; 32]) -> Result<(Vec<u8>, Vec<u8>), Box<dyn Error>> {
     
-    //"password12345@ -> 110100010101110..."
-
-    Ok(vec![12,38]) 
-
-
-}
-
-pub fn decrypt_password(password: String) -> Result<String> {
-
-    //obtain from database
-    //hexstring =....
-    //hexstring_to_bin(hex_string)
-
-    //USE MASTERKEY AS ENCRYPTION KEY
-    //TRY PEPPERS
-
-    Ok("dummy".to_string()) 
+    let key = Key::<Aes256Gcm>::from_slice(raw_key);
     
+    let cipher = Aes256Gcm::new(key);
+    let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+
+    let encrypted_password = cipher
+        .encrypt(&nonce, password.as_bytes())
+        .map_err(|e| format!("Encryption failed: {:?}", e))?; // Remove `.into()` here
+
+    Ok((encrypted_password, nonce.to_vec()))
 }
 
-fn main(){
 
-    println!("Doesn't do anything, just a helper file");
-    let m = hashpass("ayush123@".to_string()).unwrap();
-    println!("hash: {:#?} bool: {:#?}", m.0, m.1);
+
+pub fn decrypt_password(encrypted_password: Vec<u8>, nonce: Vec<u8>, raw_key: &[u8; 32]) -> Result<String> {
+
+    let key = Key::<Aes256Gcm>::from_slice(raw_key);
+    let cipher = Aes256Gcm::new(key);
+    let nonce_new: &aes_gcm::aead::generic_array::GenericArray<u8, U12> = Nonce::from_slice(&nonce);
+
+    let decrypted_password = cipher.decrypt(nonce_new, encrypted_password.as_ref())
+        .map_err(|_| rusqlite::Error::InvalidQuery)?; // Map to rusqlite::Error` BAD PRACTICE CHANGE LATER
+
+    let plaintext = String::from_utf8(decrypted_password)
+        .map_err(|_| rusqlite::Error::InvalidQuery)?; // Map to rusqlite::Error` BAD PRACTICE CHANGE LATER
+
+
+    Ok(plaintext)
+    
 }
 
 pub fn bin_to_hexstring(binary: Vec<u8>) -> Option<String> {
@@ -141,6 +143,18 @@ pub fn hexstring_to_bin(mut hex_string: String) -> Option<Vec<u8>> {
     //println!("Vector: {:#?}", bytes); 
 
     Some(bytes)
+}
+
+fn delicious_juniper() -> String {
+    let output = Command::new("/Users/ayush/Desktop/Rust-ML/Bastion/src/Juniper") 
+        .output()
+        .expect("Failed to execute Juniper");
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+fn main() {
+    println!("Why are you running this?");
 }
 
 
